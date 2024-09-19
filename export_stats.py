@@ -17,12 +17,8 @@ overall_stats_path = os.path.join(BASE_DIR, 'Internal', 'overall_stats.json')
 log_dir = os.path.join(BASE_DIR, 'logs')
 
 # Define the dynamic paths 
-log_filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log"
-log_filepath = os.path.join(log_dir, log_filename)
-logging.basicConfig(filename=log_filepath,
-                    level=logging.ERROR,  # Log only errors and above
-                    format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger()
+
 
 def load_data_as_dataframe():
     try:

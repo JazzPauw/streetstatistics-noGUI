@@ -11,16 +11,9 @@ from model import FrameProcessor
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 save_directory = os.path.join(BASE_DIR, 'Video_Outputs')  
 dest_folder = os.path.join(BASE_DIR, 'Internal', 'FramesQueue') 
-log_dir = os.path.join(BASE_DIR, 'logs')
-
 # Define the localized paths 
 
-log_filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log"
-log_filepath = os.path.join(log_dir, log_filename)
-logging.basicConfig(filename=log_filepath,
-                    level=logging.ERROR,  # Log only errors and above
-                    format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger()
 
 # Timestamp for video output file
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -94,7 +87,7 @@ class FrameCapture:
                     img_name = f"{img_name.strftime('%Y%m%d_%H%M%S')}_{img_name.microsecond // 1000:03d}"
                     while len(os.listdir(self.dest_folder)) >= 6:
                         print("Waiting for directory to clear...")
-                        time.sleep(0.1)  # Wait for 0.5 seconds before checking again
+                        time.sleep(0.1)  # Wait for 0.1 seconds before checking again
                     frame_filename = os.path.join(self.dest_folder, f"{img_name}.png")
                     cv2.imwrite(frame_filename, frame)
                     if self.video_write:
