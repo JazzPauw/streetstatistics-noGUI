@@ -18,7 +18,7 @@ StreetStatistics processes video feeds in real time, detecting objects like peop
 ## **How to Install**
 
 ### **Prerequisites**
-Before running the application, ensure you have the following installed:
+Before running the application, ensure you have the following installed: (These are also in requirements.txt) 
 - Python 3.7+
 - **PyQt5**
 - **OpenCV**
@@ -57,3 +57,9 @@ Before running the application, ensure you have the following installed:
 3. **Visualize Your Data**:
     After or during the running of the program, you can view visualized insights into the data you collected using the export button or viewing them on the sidebar. 
 
+### **Something not working right:**
+
+StreetStatistics takes many external variables to work in realtime, if even one of these is off it can cause inaccuracies. 
+These inaccuracies can cause behaviour such as targets not being counted or timeskips of a few seconds. When these things do occur, StreetStatistics tries to work through a backlog and/or try to see if it can fill in the gaps in data. Nonetheless it can occur that some targets are not counted. 
+
+One last thing to keep in mind is the angle of your camera. If your camera is angled in a way that one target can completely cover another for an extended period of time, it can occur that the target is forgotten.  
