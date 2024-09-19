@@ -18,7 +18,7 @@ StreetStatistics processes video feeds in real time, detecting objects like peop
 ## **How to Install**
 
 ### **Prerequisites**
-Before running the application, ensure you have the following installed:
+Before running the application, ensure you have the following installed: (These are also in requirements.txt) 
 - Python 3.7+
 - **PyQt5**
 - **OpenCV**
