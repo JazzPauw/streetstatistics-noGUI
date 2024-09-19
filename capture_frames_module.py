@@ -1,6 +1,7 @@
 import cv2
 import os
 import traceback
+import logging
 import time
 import streamlink
 from datetime import datetime
@@ -10,8 +11,16 @@ from model import FrameProcessor
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 save_directory = os.path.join(BASE_DIR, 'Video_Outputs')  
 dest_folder = os.path.join(BASE_DIR, 'Internal', 'FramesQueue') 
-# Define localized paths
+log_dir = os.path.join(BASE_DIR, 'logs')
 
+# Define the localized paths 
+
+log_filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log"
+log_filepath = os.path.join(log_dir, log_filename)
+logging.basicConfig(filename=log_filepath,
+                    level=logging.ERROR,  # Log only errors and above
+                    format='%(asctime)s %(levelname)s: %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
 # Timestamp for video output file
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -22,7 +31,7 @@ class FrameCapture:
     def __init__(self, url, points, model_path='yolov9e-seg.pt', frames_to_skip=9, duration=43200):
         self.url = url
         self.dest_folder = dest_folder  
-        self.model_path = os.path.join(BASE_DIR, 'Internal', model_path)
+        self.model_path = model_path
         self.frames_to_skip = frames_to_skip # The streamlink connection collects all the frames of the livestream, this is more than the program could ever handle (and many dupe frames), we skip some frames for this reason
         self.track_positions = {}
         self.duration = duration
@@ -96,6 +105,7 @@ class FrameCapture:
                             print("Saved video, probably")
                         break
             except Exception as e:
+                logging.error("An error occured: %s", e, exc_info=True)        
                 traceback.print_exc()
                 print(f"ERROR: {e}")
 

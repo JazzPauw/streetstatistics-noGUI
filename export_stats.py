@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import json
 import os
 import pandas as pd
+import logging
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -13,6 +14,15 @@ app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 overall_stats_path = os.path.join(BASE_DIR, 'Internal', 'overall_stats.json')
+log_dir = os.path.join(BASE_DIR, 'logs')
+
+# Define the dynamic paths 
+log_filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log"
+log_filepath = os.path.join(log_dir, log_filename)
+logging.basicConfig(filename=log_filepath,
+                    level=logging.ERROR,  # Log only errors and above
+                    format='%(asctime)s %(levelname)s: %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
 def load_data_as_dataframe():
     try:
@@ -96,13 +106,14 @@ def generate_cumulative_count_plot(df):
         plt.grid(True)
     else:
         df = df.sort_values('timestamp')
-        df['cumulative_count'] = df.index + 1  
+        df['cumulative_count'] = range(1, len(df) + 1)
 
         plt.figure(figsize=(10, 6))
         plt.plot(df['timestamp'], df['cumulative_count'], marker='o', color='g', linestyle='-')
         plt.title('Cumulative Target Count Over Time')
         plt.xlabel('Time')
         plt.ylabel('Cumulative Count')
+        plt.xticks(rotation=45)
         plt.grid(True)
 
     img = io.BytesIO()
@@ -159,21 +170,24 @@ def generate_direction_plot(df):
 
 @app.route('/')
 def index():
-    df = load_data_as_dataframe()
+    try:    
+        df = load_data_as_dataframe()
 
-    hourly_plot_url = generate_hourly_activity_plot(df)
-    class_plot_url = generate_class_distribution_plot(df)
-    direction_plot_url = generate_direction_plot(df)
-    cumulative_count_plot_url = generate_cumulative_count_plot(df)  
-    text_stats = calculate_text_stats(df)
+        hourly_plot_url = generate_hourly_activity_plot(df)
+        class_plot_url = generate_class_distribution_plot(df)
+        direction_plot_url = generate_direction_plot(df)
+        cumulative_count_plot_url = generate_cumulative_count_plot(df)  
+        text_stats = calculate_text_stats(df)
 
-    return render_template('index.html', 
-                           hourly_plot_url=hourly_plot_url, 
-                           class_plot_url=class_plot_url,
-                           direction_plot_url=direction_plot_url,
-                           cumulative_count_plot_url = cumulative_count_plot_url,
-                           df=df.to_html(classes='table table-striped', index=False),
-                           text_stats=text_stats) 
+        return render_template('index.html', 
+                            hourly_plot_url=hourly_plot_url, 
+                            class_plot_url=class_plot_url,
+                            direction_plot_url=direction_plot_url,
+                            cumulative_count_plot_url =cumulative_count_plot_url,
+                            df=df.to_html(classes='table table-striped', index=False),
+                            text_stats=text_stats) 
+    except Exception as e:
+        logging.error("An error occured: %s", e, exc_info=True)        
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

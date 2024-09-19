@@ -3,6 +3,7 @@ import numpy as np
 import os
 import random
 import json
+import logging
 from collections import deque
 from datetime import datetime
 from short import Sort  
@@ -16,7 +17,16 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 live_stats_path = os.path.join(BASE_DIR, 'Internal', 'live_stats.json')
 overall_stats_path = os.path.join(BASE_DIR, 'Internal', 'overall_stats.json')
 user_settings_path = os.path.join(BASE_DIR, 'Internal', 'user_settings.json')
-# Define localized paths
+log_dir = os.path.join(BASE_DIR, 'logs')
+
+# Define the dynamic paths 
+log_filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log"
+log_filepath = os.path.join(log_dir, log_filename)
+logging.basicConfig(filename=log_filepath,
+                    level=logging.ERROR,  # Log only errors and above
+                    format='%(asctime)s %(levelname)s: %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
+
 
 class FrameProcessor:
     def __init__(self, points, model_path='yolov9e-seg.pt'):
@@ -147,6 +157,7 @@ class FrameProcessor:
             return original, self.track_positions, timestamp
         except Exception as e:
             if 'NoneType' not in str(e):
+                logging.error("An error occured: %s", e, exc_info=True)        
                 print(f"LOG: {e}")
             if not self.track_positions:
                 self.track_positions = {}

@@ -7,6 +7,7 @@ import json
 import pandas as pd
 import webbrowser
 import numpy as np
+import logging
 import traceback
 import torch
 import subprocess
@@ -27,7 +28,19 @@ overall_stats_path = os.path.join(BASE_DIR, 'Internal', 'overall_stats.json')
 user_settings_path = os.path.join(BASE_DIR, 'Internal', 'user_settings.json')
 video_output_dir = os.path.join(BASE_DIR, 'Video_Outputs')
 data_output_dir = os.path.join(BASE_DIR, 'Data_outputs')
+log_dir = os.path.join(BASE_DIR, 'logs')
+
+# Custom or new model? Define the path here: (Must be in Internal folder) 
+model_path = os.path.join(BASE_DIR, 'Internal', "yolov9e-seg.pt")
+
+
 # Define the dynamic paths 
+log_filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log"
+log_filepath = os.path.join(log_dir, log_filename)
+logging.basicConfig(filename=log_filepath,
+                    level=logging.ERROR,  # Log only errors and above
+                    format='%(asctime)s %(levelname)s: %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 print(torch.cuda.is_available())
@@ -54,7 +67,7 @@ class InputDialog(QDialog):
 class CaptureThread(QThread):
     def __init__(self, url, dest_folder, points):
         super().__init__()
-        self.frame_capture = FrameCapture(url, points, 'yolov9e-seg.pt')
+        self.frame_capture = FrameCapture(url, points, model_path)
 
     def run(self):
         if self.frame_capture.start_capture():
@@ -121,7 +134,7 @@ class FrameDisplayThread(QThread):
                         else:
                             self.advanced_processing(frames, queue)
             except Exception as e:
-                print(e)
+                logging.error("An error occured: %s", e, exc_info=True)
                 traceback.print_exc()
                 time.sleep(0.1)
     def stop(self):
@@ -429,6 +442,7 @@ class Schema(QMainWindow):
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
             except Exception as e:
+                logging.error(f"Failed to delete {file_path}. Reason: {e} ", exc_info=True)
                 print(f'Failed to delete {file_path}. Reason: {e}')
 
 class DraggableGraphicsView(QGraphicsView):
@@ -658,6 +672,7 @@ def clear_frame_folder(folder):
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
+            logging.error(f"Failed to delete {file_path}. Reason: {e} ", exc_info=True)
             print(f'Failed to delete {file_path}. Reason: {e}')
 
 def main():
@@ -676,6 +691,7 @@ def main():
         window.show()
         sys.exit(app.exec_())
     except Exception as e:
+        logging.error("An error occured: %s", e, exc_info=True)        
         print(e)
         traceback.print_exc()
 
