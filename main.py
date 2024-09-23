@@ -11,6 +11,7 @@ import logging
 import traceback
 import torch
 import subprocess
+import requests
 from collections import deque
 from datetime import datetime, timedelta
 from PyQt5 import uic
@@ -19,6 +20,8 @@ from PyQt5.QtGui import QPixmap, QImage, QClipboard
 from PyQt5.QtWidgets import QGridLayout, QLabel, QMainWindow, QCheckBox, QApplication, QDialog, QVBoxLayout, QPushButton, QLineEdit, QMessageBox, QFileDialog, QGraphicsScene, QGraphicsView
 from capture_frames_module import FrameCapture
 # Import neccesary imports
+
+current_version = "v0.2"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 frame_queue_dir = os.path.join(BASE_DIR, 'Internal', 'FramesQueue')
@@ -313,6 +316,14 @@ class Schema(QMainWindow):
         self.label_9.setText(f'Total detections: ???')
         self.label_10.setText(f'Frames per Second: ???')
         self.version_label = self.findChild(QLabel, 'version_label')
+        self.version_label_2 = self.findChild(QLabel, 'version_label_2')
+        latest_version = version_control(current_version)
+        print(latest_version)
+        if current_version == latest_version:
+            self.version_label.setText(f"{current_version}")
+        else:
+            self.version_label.setText(f"A new version is available!")
+            self.version_label_2.setText(f"{current_version} -> {latest_version}")
     def setup_threads(self):
         self.frame_display_thread = FrameDisplayThread(frame_queue_dir, self.avg_people_label, self.label_2, self.label_3, self.label_4, self.label_5, self.label_6, self.label_7, self.label_8, self.label_9, self.label_10)
         self.frame_display_thread.update_display.connect(self.display_frame)
@@ -323,12 +334,6 @@ class Schema(QMainWindow):
         event.accept()
     
     def misc(self):
-        # Testing code, copies link to clipboard to save on time.
-        # link = 'https://www.youtube.com/watch?v=R8LU4PCZdgo'
-        # clipboard = QApplication.clipboard()
-        # clipboard.setText(link)
-
-        # Launch the export_stats.py  
         export_stats_path = os.path.join(BASE_DIR, 'export_stats.py')
         subprocess.Popen(["python", export_stats_path])
         webbrowser.open("http://127.0.0.1:5000")
@@ -675,6 +680,20 @@ def clear_frame_folder(folder):
             logging.error(f"Failed to delete {file_path}. Reason: {e} ", exc_info=True)
             print(f'Failed to delete {file_path}. Reason: {e}')
 
+def version_control(current_version):
+    url = "https://github.com/JazzPauw/streetstatistics/releases/latest"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        latest_version = response.json()['tag_name']
+        if latest_version > current_version:
+            return latest_version
+        else:
+            return current_version
+    except requests.RequestException as e:
+        logging.error(f"Failed to check updat: {e}")
+        return current_version
+    
 def main():
     try:
         if torch.cuda.is_available():

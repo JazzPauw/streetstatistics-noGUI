@@ -325,6 +325,7 @@
     </property>
     <property name="font">
      <font>
+      <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
@@ -439,9 +440,9 @@
    <widget class="QLabel" name="version_label">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>10</x>
       <y>410</y>
-      <width>101</width>
+      <width>161</width>
       <height>16</height>
      </rect>
     </property>
@@ -450,6 +451,31 @@
     </property>
     <property name="text">
      <string>v1.0</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::RichText</enum>
+    </property>
+    <property name="scaledContents">
+     <bool>false</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="version_label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>430</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string/>
     </property>
     <property name="textFormat">
      <enum>Qt::RichText</enum>

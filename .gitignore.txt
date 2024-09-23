@@ -1,1 +1,8 @@
 Internal/yolov9e-seg.pt
+logs/*.log
+Dockerfile
+Singularity.def
+*.tar.gz
+singularity-ce-*/
+Video_outputs/*.mp4
+singularity-ce-3.11.0

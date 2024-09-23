@@ -92,34 +92,6 @@ def generate_hourly_activity_plot(df):
     plt.close()
     return plot_url
 
-def generate_cumulative_count_plot(df):
-    if df.empty:
-        plt.figure(figsize=(10, 6))
-        plt.plot([], [], marker='o', color='b', linestyle='-')
-        plt.title('Cumulative Target Count (No Data)')
-        plt.xlabel('Time')
-        plt.ylabel('Cumulative Count')
-        plt.grid(True)
-    else:
-        df = df.sort_values('timestamp')
-        df['cumulative_count'] = range(1, len(df) + 1)
-
-        plt.figure(figsize=(10, 6))
-        plt.plot(df['timestamp'], df['cumulative_count'], marker='o', color='g', linestyle='-')
-        plt.title('Cumulative Target Count Over Time')
-        plt.xlabel('Time')
-        plt.ylabel('Cumulative Count')
-        plt.xticks(rotation=45)
-        plt.grid(True)
-
-    img = io.BytesIO()
-    plt.savefig(img, format='png')
-    img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode('utf8')
-    plt.close()
-    return plot_url
-
-
 def generate_class_distribution_plot(df):
     if df.empty:
         labels = ['Humans', 'Vehicles']
@@ -172,14 +144,13 @@ def index():
         hourly_plot_url = generate_hourly_activity_plot(df)
         class_plot_url = generate_class_distribution_plot(df)
         direction_plot_url = generate_direction_plot(df)
-        cumulative_count_plot_url = generate_cumulative_count_plot(df)  
         text_stats = calculate_text_stats(df)
 
         return render_template('index.html', 
                             hourly_plot_url=hourly_plot_url, 
                             class_plot_url=class_plot_url,
                             direction_plot_url=direction_plot_url,
-                            cumulative_count_plot_url =cumulative_count_plot_url,
+
                             df=df.to_html(classes='table table-striped', index=False),
                             text_stats=text_stats) 
     except Exception as e:
