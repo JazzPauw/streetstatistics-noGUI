@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import QGridLayout, QLabel, QMainWindow, QCheckBox, QApplic
 from capture_frames_module import FrameCapture
 # Import neccesary imports
 
-current_version = "v0.2"
+current_version = "v1.1"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 frame_queue_dir = os.path.join(BASE_DIR, 'Internal', 'FramesQueue')
@@ -248,7 +248,7 @@ class FrameDisplayThread(QThread):
         self.label_6.setText(f'Total from direction B: {direction_2}')
         self.label_7.setText(f'Total Vehicles: {self.vehicle_class_count}')
         self.label_8.setText(f'Total Humans: {self.human_class_count}')
-        self.label_9.setText(f'Total detections: {total_all_time}')
+        self.label_9.setText(f'Currently detecting: {total_all_time}')
         self.label_10.setText(f'Frames per Second: {self.fps}')
         frame_data = data.pop(frame_name, {})
        
@@ -313,12 +313,11 @@ class Schema(QMainWindow):
         self.label_6.setText(f'Total from direction B: ???')
         self.label_7.setText(f'Total Vehicles: ???')
         self.label_8.setText(f'Total Humans: ???')
-        self.label_9.setText(f'Total detections: ???')
+        self.label_9.setText(f'Currently detecting: ???')
         self.label_10.setText(f'Frames per Second: ???')
         self.version_label = self.findChild(QLabel, 'version_label')
         self.version_label_2 = self.findChild(QLabel, 'version_label_2')
         latest_version = version_control(current_version)
-        print(latest_version)
         if current_version == latest_version:
             self.version_label.setText(f"{current_version}")
         else:
