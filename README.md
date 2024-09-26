@@ -7,18 +7,18 @@ These are standalone and can be used interchangably.
 
 Capturing frames docker is a docker that runs continuously until stopped. 
 It takes the following inputs: 
--- url, to a youtube live stream
--- path, to a folder used as a storing place (or queue) for the frames
--- frames_to_skip, amount of frames to skip during processing 
--- duration, time in seconds before the connection is closed. Default 43200
+\n-- url, to a youtube live stream
+\n-- path, to a folder used as a storing place (or queue) for the frames
+\n-- frames_to_skip, amount of frames to skip during processing 
+\n-- duration, time in seconds before the connection is closed. Default 43200
 
 Using these it creates a connection and starts collecting frames from the youtube link.
 
 Model docker is a docker that runs when it is called.
 It takes the following inputs:
--- frame_path, path to the frame you wish to process
--- points, Points data for the structure
--- model_path, path to the yolo model you wish to use. 
+\n-- frame_path, path to the frame you wish to process
+\n-- points, Points data for the structure
+\n-- model_path, path to the yolo model you wish to use. 
 
 The model docker processes data and outputs to a predefined folder, it returns the processed frame, stats, and two objects in the form of a picklefile. 
 The processed frame and stats can be read. The picklefiles are used in the next iteration to maintain a tracking state, the user does not need to concern themselves with the files. (But they may valuable hold information)
