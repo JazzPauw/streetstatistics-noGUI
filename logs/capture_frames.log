@@ -1,0 +1,5 @@
+ERROR:root:Unhandled exception: name 'stats' is not defined
+Traceback (most recent call last):
+  File "C:\Users\jazzp\CodingJupyter\StreetStatisticsGUI-less\main.py", line 172, in <module>
+    if stats['direction_1'] > 0:
+NameError: name 'stats' is not defined
