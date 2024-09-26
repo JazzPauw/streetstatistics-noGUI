@@ -25,6 +25,9 @@ The model docker processes data and outputs to a predefined folder, it returns t
 
 
 ## **Example script:**
+You will have to create the model.py docker as it is too large for github. 
+You can do so using the provided DockerFile and running: <br> docker build --no-cache -t model_image .
+
 main.py is set up as following:
 <br>It starts by collecting frames, once there are more than {x} frames in the designated folder it sends a signal to the docker to stop. 
 <br>Once it has stopped the model docker will start processing the frames, the outputs are read and printed at the end of its run. 
